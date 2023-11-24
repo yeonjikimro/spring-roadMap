@@ -15,7 +15,7 @@ public class MappingController {
         return "ok";
     }
 
-    @RequestMapping("/mapping-get-v1", method = RequestMethod.GET)
+    @RequestMapping(value = "/mapping-get-v1", method = RequestMethod.GET)
     public String mappingGetV1() {
         log.info("mappingGetV1");
         return "ok";
@@ -43,6 +43,64 @@ public class MappingController {
     @GetMapping("/mapping/{userId}")
     public String mappingPath(@PathVariable("userId") String data) {
         log.info("mappingPath userId={}", data);
+        return "ok";
+    }
+
+    /**
+     * 파라미터로 추가 매핑
+     * params="mode"
+     * params="!mode"
+     * params="mode=debug"
+     * params="mode!=debug" (!=)
+     * params = {"mode=debug", "data=good"}
+     * @return
+     */
+    @GetMapping(value = "/mapping-param", params = "mode=debug")
+    public String mappingParam() {
+        log.info("mappingParam");
+        return "ok";
+    }
+
+    /**
+     * 특정 헤더로 추가 매핑
+     * headers="mode"
+     * headers="!mode"
+     * headers="mode=debug"
+     * headers="mode!=debug" (!=)
+     * @return
+     */
+    @GetMapping(value = "/mapping-header", params = "mode=debug")
+    public String mappingHeader() {
+        log.info("mappingHeader");
+        return "ok";
+    }
+
+    /**
+     * Content-Type 헤더 기반 추가 매핑 Media Type
+     * consumes="application/json"
+     * consumes="!application/json"
+     * consumes="application/*"
+     * consumes="*\/*"
+     * MediaType.APPLICATION_JSON_VALUE
+     * @return
+     */
+    @PostMapping(value="/mapping-consume", consumes = "application/json")
+    public String mappingConsumes() {
+        log.info("mappingConsumes");
+        return "ok";
+    }
+
+    /**
+     * Accept 헤더 기반 Media Type
+     * produces = "text/html"
+     * produces = "!text/html"
+     * produces = "text/*"
+     * produces = "*\/*"
+     * @return
+     */
+    @PostMapping(value="/mapping-produce", produces = "text/html")
+    public String mappingProduces() {
+        log.info("mappingProduces");
         return "ok";
     }
 
