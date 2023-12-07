@@ -1,16 +1,23 @@
 package hello.itemservice.web.basic;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/basic/items")
@@ -147,6 +154,46 @@ public class BasicItemController {
     public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemRepository.update(itemId, item);
         return "redirect:/basic/items/{itemId}";
+    }
+
+
+    @GetMapping("/amChart")
+    public String amChart() {
+
+
+        return "basic/amChart";
+    }
+
+    @RequestMapping(value = "/amChart.json")
+    public String purQtyTotalTreeMap(HttpServletRequest pRequest, HttpServletResponse pResponse
+            , @RequestParam Map<String, Object> paramMap, ModelMap model) throws Exception {
+
+
+        //List<String> resultList = shipPurQtyTotalService.getPurTreeMap(paramMap);
+        //System.out.println("resultList"+resultList);
+        //model.addAttribute("data", resultList);
+
+        // JSON 파일 경로 설정
+        String jsonFilePath = "src/main/resources/static/json/am.json";  // 실제 파일 경로로 변경하세요
+
+        // JSON 파일을 읽어오기 위한 ObjectMapper 객체 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // JSON 파일을 Map으로 읽어옴
+            Map<String, Object> jsonData = objectMapper.readValue(new File(jsonFilePath), Map.class);
+
+            // 모델에 데이터 추가
+            model.addAttribute("data", jsonData);
+        } catch (IOException e) {
+            // 예외 처리: 파일 읽기 실패 시
+            e.printStackTrace();
+            // 실패 시에도 JSON 뷰를 반환하거나 적절한 처리를 수행하세요.
+            return "jsonView";  // 또는 실패 시에 반환할 뷰 이름을 지정하세요.
+        }
+
+
+        return "jsonView";
     }
 
 
