@@ -7,6 +7,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +20,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
-@RequestMapping("/basic/items")
+@RequestMapping("/form/items")
 @RequiredArgsConstructor
 public class BasicItemController {
 
@@ -36,7 +38,7 @@ public class BasicItemController {
     public String items(Model model) {
         List<Item> items = itemRepository.findAll();
         model.addAttribute("items", items);
-        return "basic/items";
+        return "form/items";
     }
 
     @GetMapping("/{itemId}")
@@ -44,13 +46,17 @@ public class BasicItemController {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
 
-        return "basic/item";
+        return "form/item";
     }
 
 
     @GetMapping("/add")
-    public String addForm() {
-        return "basic/addForm";
+    public String addForm(Model model) {
+
+        model.addAttribute("item", new Item());
+
+
+        return "form/addForm";
     }
 
 
@@ -69,7 +75,7 @@ public class BasicItemController {
 
         model.addAttribute("item", item);
 
-        return "basic/item";
+        return "form/item";
     }
 
 
@@ -85,7 +91,7 @@ public class BasicItemController {
         itemRepository.save(item);
         //model.addAttribute("item", item); // 자동 추가, 생략 가능
 
-        return "basic/item";
+        return "form/item";
     }
 
     // @PostMapping("/add")
@@ -98,7 +104,7 @@ public class BasicItemController {
         itemRepository.save(item);
         //model.addAttribute("item", item); // 자동 추가, 생략 가능
 
-        return "basic/item";
+        return "form/item";
     }
 
 
@@ -110,7 +116,7 @@ public class BasicItemController {
          */
         itemRepository.save(item);
 
-        return "basic/item";
+        return "form/item";
     }
 
     /*
@@ -122,7 +128,7 @@ public class BasicItemController {
 
         itemRepository.save(item);
 
-        return "redirect:/basic/items/" + item.getId();
+        return "redirect:/form/items/" + item.getId();
     }
 
     /*
@@ -132,13 +138,16 @@ public class BasicItemController {
      */
     @PostMapping("/add")
     public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+
+        log.info("item.open={}", item.getOpen());
+
         Item saveItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", saveItem.getId());
         redirectAttributes.addAttribute("status", true);
         // http://localhost:8080/basic/items/3?status=true
         //  <h2 th:if="${param.status}" th:text="'저장 완료'"></h2>
 
-        return "redirect:/basic/items/{itemId}";
+        return "redirect:/form/items/{itemId}";
     }
 
 
@@ -147,53 +156,13 @@ public class BasicItemController {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
 
-        return "basic/editForm";
+        return "form/editForm";
     }
 
     @PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemRepository.update(itemId, item);
-        return "redirect:/basic/items/{itemId}";
-    }
-
-
-    @GetMapping("/amChart")
-    public String amChart() {
-
-
-        return "basic/amChart";
-    }
-
-    @RequestMapping(value = "/amChart.json")
-    public String purQtyTotalTreeMap(HttpServletRequest pRequest, HttpServletResponse pResponse
-            , @RequestParam Map<String, Object> paramMap, ModelMap model) throws Exception {
-
-
-        //List<String> resultList = shipPurQtyTotalService.getPurTreeMap(paramMap);
-        //System.out.println("resultList"+resultList);
-        //model.addAttribute("data", resultList);
-
-        // JSON 파일 경로 설정
-        String jsonFilePath = "src/main/resources/static/json/am.json";  // 실제 파일 경로로 변경하세요
-
-        // JSON 파일을 읽어오기 위한 ObjectMapper 객체 생성
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            // JSON 파일을 Map으로 읽어옴
-            Map<String, Object> jsonData = objectMapper.readValue(new File(jsonFilePath), Map.class);
-
-            // 모델에 데이터 추가
-            model.addAttribute("data", jsonData);
-        } catch (IOException e) {
-            // 예외 처리: 파일 읽기 실패 시
-            e.printStackTrace();
-            // 실패 시에도 JSON 뷰를 반환하거나 적절한 처리를 수행하세요.
-            return "jsonView";  // 또는 실패 시에 반환할 뷰 이름을 지정하세요.
-        }
-
-
-        return "jsonView";
+        return "redirect:/form/items/{itemId}";
     }
 
 
