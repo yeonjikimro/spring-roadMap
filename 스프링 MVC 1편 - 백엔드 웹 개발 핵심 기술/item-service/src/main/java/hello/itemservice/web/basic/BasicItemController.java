@@ -1,8 +1,10 @@
 package hello.itemservice.web.basic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hello.itemservice.domain.item.DeliveryCode;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
+import hello.itemservice.domain.item.ItemType;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +37,35 @@ public class BasicItemController {
     //    public BasicItemController(ItemRepository itemRepository) {
     //        this.itemRepository = itemRepository;
     //    }
+
+
+    // 이 컨트롤러 안에 사용되는 모든 메서드들이 실행될 때 해당 model이 자동으로 담김
+    @ModelAttribute("regions")
+    public Map<String, String> regions() {
+        Map<String, String> regions = new LinkedHashMap<>();
+        regions.put("SEOUL", "서울");
+        regions.put("BUSAN", "부산");
+        regions.put("JEJU", "제주");
+        return regions;
+    }
+
+    @ModelAttribute("itemTypes")
+    public ItemType[] itemTypes() {
+        // Enum의 모든 배열 반환
+        ItemType[] values = ItemType.values();
+        return values;
+    }
+
+
+    @ModelAttribute("deliveryCodes")
+    public List<DeliveryCode> deliveryCodes() {
+        List<DeliveryCode> deliveryCodes = new ArrayList<>();
+        deliveryCodes.add(new DeliveryCode("FAST", "빠른 배송"));
+        deliveryCodes.add(new DeliveryCode("NORMAL", "일반 배송"));
+        deliveryCodes.add(new DeliveryCode("SLOW", "느린 배송"));
+        return deliveryCodes;
+    }
+
 
     @GetMapping
     public String items(Model model) {
@@ -52,9 +85,7 @@ public class BasicItemController {
 
     @GetMapping("/add")
     public String addForm(Model model) {
-
         model.addAttribute("item", new Item());
-
 
         return "form/addForm";
     }
@@ -155,6 +186,7 @@ public class BasicItemController {
     public String editForm(@PathVariable Long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item", item);
+
 
         return "form/editForm";
     }
