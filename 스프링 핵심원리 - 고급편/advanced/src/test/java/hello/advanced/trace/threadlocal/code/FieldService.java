@@ -1,4 +1,4 @@
-package hello.advanced.trace.threadlocal;
+package hello.advanced.trace.threadlocal.code;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,7 +7,7 @@ public class FieldService {
 
     private String nameStore;
 
-    public String login(String name) {
+    public String logic(String name) {
         log.info("저장 name{} -> nameStore={}", name, nameStore);
         nameStore = name;
         sleep(1000);
