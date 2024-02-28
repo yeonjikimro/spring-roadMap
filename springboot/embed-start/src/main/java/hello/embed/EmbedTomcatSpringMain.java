@@ -11,7 +11,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class EmbedTomcatSpringMain {
 
     public static void main(String[] args) throws LifecycleException {
-        System.out.println("EmbedTomcatSpringMain");
+        System.out.println("EmbedTomcatSpringMain1");
 
         // 톰캣 설정
         Tomcat tomcat = new Tomcat();
