@@ -13,6 +13,7 @@ public class EmbedTomcatSpringMain {
     public static void main(String[] args) throws LifecycleException {
         System.out.println("EmbedTomcatSpringMain1");
 
+        // 배포
         // 톰캣 설정
         Tomcat tomcat = new Tomcat();
         Connector connector = new Connector();
